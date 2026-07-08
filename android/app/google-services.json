@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1044969025239",
+    "project_id": "tinder-e5f46",
+    "storage_bucket": "tinder-e5f46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044969025239:android:f3df458887e1a0a9e9ca92",
+        "android_client_info": {
+          "package_name": "com.tinderclone.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL4kODQV94FDsIbWJbST-5ZxOOhwIa1mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
