@@ -603,11 +603,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     size: 14,
                                                   ),
                                                   const SizedBox(width: 4),
-                                                  const Text(
-                                                    'Nearby',
-                                                    style: TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 13,
+                                                  Expanded(
+                                                    child: Text(
+                                                      (profile['locationName'] != null &&
+                                                              profile['locationName']
+                                                                  .toString()
+                                                                  .isNotEmpty)
+                                                          ? profile['locationName']
+                                                              .toString()
+                                                          : 'Nearby',
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        color: Colors.white70,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
