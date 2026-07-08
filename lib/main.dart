@@ -8,7 +8,7 @@ import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Load environment variables
   try {
     await dotenv.load(fileName: ".env");
@@ -29,11 +29,7 @@ void main() async {
     print("Warning: Firebase initialization skipped: $e");
   }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
