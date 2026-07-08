@@ -17,13 +17,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final CardSwiperController _swiperController = CardSwiperController();
-  
+
   double _filterDistance = 50.0;
   RangeValues _filterAgeRange = const RangeValues(18, 50);
   String _filterGender = 'female';
-  final TextEditingController _religionFilterController = TextEditingController();
-  final TextEditingController _educationFilterController = TextEditingController();
-  final TextEditingController _professionFilterController = TextEditingController();
+  final TextEditingController _religionFilterController =
+      TextEditingController();
+  final TextEditingController _educationFilterController =
+      TextEditingController();
+  final TextEditingController _professionFilterController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -34,9 +37,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
-  void _onSwipeDetected(int index, CardSwiperDirection direction, List<Map<String, dynamic>> profiles) {
+  void _onSwipeDetected(
+    int index,
+    CardSwiperDirection direction,
+    List<Map<String, dynamic>> profiles,
+  ) {
     if (index >= profiles.length) return;
-    
+
     final targetProfile = profiles[index];
     final targetUserId = targetProfile['user']['_id'] as String;
 
@@ -49,7 +56,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void _showMatchDialog(BuildContext context, Map<String, dynamic> lastMatch, String myPhoto, String apiBaseUrl) {
+  void _showMatchDialog(
+    BuildContext context,
+    Map<String, dynamic> lastMatch,
+    String myPhoto,
+    String apiBaseUrl,
+  ) {
     final targetProfile = lastMatch['profile'];
     final targetPhotos = List<String>.from(targetProfile['photos'] ?? []);
     final targetPhoto = targetPhotos.isNotEmpty ? targetPhotos.first : '';
@@ -70,15 +82,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.favorite, color: AppTheme.primaryPink, size: 80),
+                const Icon(
+                  Icons.favorite,
+                  color: AppTheme.primaryPink,
+                  size: 80,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'It\'s a Match!',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: Colors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    color: Colors.white,
+                    fontSize: 40,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -100,7 +116,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         border: Border.all(color: Colors.white, width: 4),
                         image: DecorationImage(
                           image: CachedNetworkImageProvider(
-                            myPhoto.startsWith('/uploads/') ? '$apiBaseUrl$myPhoto' : myPhoto,
+                            myPhoto.startsWith('/uploads/')
+                                ? '$apiBaseUrl$myPhoto'
+                                : myPhoto,
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -116,7 +134,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         border: Border.all(color: Colors.white, width: 4),
                         image: DecorationImage(
                           image: CachedNetworkImageProvider(
-                            targetPhoto.startsWith('/uploads/') ? '$apiBaseUrl$targetPhoto' : targetPhoto,
+                            targetPhoto.startsWith('/uploads/')
+                                ? '$apiBaseUrl$targetPhoto'
+                                : targetPhoto,
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -190,11 +210,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Discovery Filters', style: Theme.of(context).textTheme.headlineMedium),
+                    Text(
+                      'Discovery Filters',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
                     const SizedBox(height: 24),
 
                     // Distance Filter
-                    Text('Maximum Distance: ${_filterDistance.toInt()} km', style: const TextStyle(fontSize: 16)),
+                    Text(
+                      'Maximum Distance: ${_filterDistance.toInt()} km',
+                      style: const TextStyle(fontSize: 16),
+                    ),
                     Slider(
                       value: _filterDistance,
                       min: 1,
@@ -207,7 +233,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 16),
 
                     // Age Filter Range
-                    Text('Age Range: ${_filterAgeRange.start.toInt()} - ${_filterAgeRange.end.toInt()}', style: const TextStyle(fontSize: 16)),
+                    Text(
+                      'Age Range: ${_filterAgeRange.start.toInt()} - ${_filterAgeRange.end.toInt()}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
                     RangeSlider(
                       values: _filterAgeRange,
                       min: 18,
@@ -220,7 +249,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 16),
 
                     // Gender Preference Selection
-                    const Text('Gender Preference', style: TextStyle(fontSize: 16)),
+                    const Text(
+                      'Gender Preference',
+                      style: TextStyle(fontSize: 16),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -228,7 +260,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           label: const Text('Male'),
                           selected: _filterGender == 'male',
                           onSelected: (selected) {
-                            if (selected) setSheetState(() => _filterGender = 'male');
+                            if (selected)
+                              setSheetState(() => _filterGender = 'male');
                           },
                         ),
                         const SizedBox(width: 8),
@@ -236,7 +269,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           label: const Text('Female'),
                           selected: _filterGender == 'female',
                           onSelected: (selected) {
-                            if (selected) setSheetState(() => _filterGender = 'female');
+                            if (selected)
+                              setSheetState(() => _filterGender = 'female');
                           },
                         ),
                         const SizedBox(width: 8),
@@ -244,7 +278,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           label: const Text('Everyone'),
                           selected: _filterGender == 'everyone',
                           onSelected: (selected) {
-                            if (selected) setSheetState(() => _filterGender = 'everyone');
+                            if (selected)
+                              setSheetState(() => _filterGender = 'everyone');
                           },
                         ),
                       ],
@@ -291,16 +326,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           'gender': _filterGender,
                         };
                         if (_religionFilterController.text.trim().isNotEmpty) {
-                          filterMap['religion'] = _religionFilterController.text.trim();
+                          filterMap['religion'] = _religionFilterController.text
+                              .trim();
                         }
                         if (_educationFilterController.text.trim().isNotEmpty) {
-                          filterMap['education'] = _educationFilterController.text.trim();
+                          filterMap['education'] = _educationFilterController
+                              .text
+                              .trim();
                         }
-                        if (_professionFilterController.text.trim().isNotEmpty) {
-                          filterMap['profession'] = _professionFilterController.text.trim();
+                        if (_professionFilterController.text
+                            .trim()
+                            .isNotEmpty) {
+                          filterMap['profession'] = _professionFilterController
+                              .text
+                              .trim();
                         }
 
-                        ref.read(swipeNotifierProvider.notifier).loadFeed(filters: filterMap);
+                        ref
+                            .read(swipeNotifierProvider.notifier)
+                            .loadFeed(filters: filterMap);
                         Navigator.of(context).pop();
                       },
                       child: const Text('Apply Filters'),
@@ -349,11 +393,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Text(
               'spark',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: AppTheme.primaryPink,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 24,
-                    letterSpacing: -0.5,
-                  ),
+                color: AppTheme.primaryPink,
+                fontWeight: FontWeight.w900,
+                fontSize: 24,
+                letterSpacing: -0.5,
+              ),
             ),
           ],
         ),
@@ -363,10 +407,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             onPressed: () => _showFilterBottomSheet(context),
           ),
           IconButton(
-            icon: const Icon(Icons.chat_bubble_outline, color: AppTheme.textSecondaryLight),
+            icon: const Icon(
+              Icons.chat_bubble_outline,
+              color: AppTheme.textSecondaryLight,
+            ),
             // Match History and Chats redirect in Module 5
             onPressed: () => context.push('/matches'),
-          )
+          ),
         ],
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -377,12 +424,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ? const Center(child: CircularProgressIndicator())
             : swipeState.profiles.isEmpty
                 ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32.0),
+                    key: const ValueKey('empty_state'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.location_searching, size: 70, color: AppTheme.textSecondaryLight),
+                          const Icon(
+                            Icons.location_searching,
+                            size: 70,
+                            color: AppTheme.textSecondaryLight,
+                          ),
                           const SizedBox(height: 24),
                           Text(
                             'No Matches Near You',
@@ -396,183 +448,275 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           const SizedBox(height: 32),
                           ElevatedButton.icon(
-                            onPressed: () => ref.read(swipeNotifierProvider.notifier).loadFeed(),
+                            onPressed: () => ref
+                                .read(swipeNotifierProvider.notifier)
+                                .loadFeed(),
                             icon: const Icon(Icons.refresh),
                             label: const Text('Refresh Discovery'),
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(200, 56),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                   )
-                : Column(
-                    children: [
-                      // Swiper Stack View
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                          child: CardSwiper(
-                            controller: _swiperController,
-                            cardsCount: swipeState.profiles.length,
-                            numberOfCardsDisplayed: swipeState.profiles.length.clamp(1, 2),
-                            cardBuilder: (context, index, percentX, percentY) {
-                              final profile = swipeState.profiles[index];
-                              final photos = List<String>.from(profile['photos'] ?? []);
-                              final photo = photos.isNotEmpty ? photos.first : '';
-                              
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: AppTheme.surfaceDark,
-                                  borderRadius: BorderRadius.circular(24),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withAlpha(51),
-                                      blurRadius: 10,
-                                      spreadRadius: 2,
-                                    )
-                                  ],
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    // Profile Image
-                                    CachedNetworkImage(
-                                      imageUrl: photo.startsWith('/uploads/') ? '$apiBaseUrl$photo' : photo,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                      errorWidget: (context, url, error) => Container(
-                                        color: AppTheme.surfaceDark,
-                                        child: const Icon(Icons.person, size: 80, color: Colors.white30),
-                                      ),
-                                    ),
-                                    // Gradient Cover overlay
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black.withAlpha(204),
-                                          ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                      ),
-                                    ),
-                                    // Details Text info overlay
-                                    Positioned(
-                                      bottom: 24,
-                                      left: 24,
-                                      right: 24,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${profile['displayName']}, ${profile['age'] ?? ""}',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 26,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              if (profile['verifiedBadge'] == true)
-                                                const Icon(Icons.verified, color: Colors.blue, size: 24),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: 8,
-                                                height: 8,
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.green,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              const Text('Online', style: TextStyle(color: Colors.green, fontSize: 13)),
-                                              const SizedBox(width: 16),
-                                              const Icon(Icons.location_on, color: Colors.white70, size: 14),
-                                              const SizedBox(width: 4),
-                                              const Text('Nearby', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            profile['bio'] ?? 'No bio provided',
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(color: Colors.white70, fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            onSwipe: (previousIndex, currentIndex, direction) {
-                              _onSwipeDetected(previousIndex, direction, swipeState.profiles);
-                              return true;
-                            },
-                          ),
-                        ),
-                      ),
+                : Container(
+                    key: const ValueKey('swiper_layout'),
+                    color: AppTheme.backgroundDark,
+                    child: Column(
+                        children: [
+                          // Swiper Stack View
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                              child: CardSwiper(
+                                key: ValueKey(swipeState.profiles.length),
+                                controller: _swiperController,
+                                cardsCount: swipeState.profiles.length,
+                                numberOfCardsDisplayed: swipeState
+                                    .profiles
+                                    .length
+                                    .clamp(1, 2),
+                                cardBuilder: (context, index, percentX, percentY) {
+                                  if (index < 0 ||
+                                      index >= swipeState.profiles.length) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  final profile = swipeState.profiles[index];
+                                  final photos = List<String>.from(
+                                    profile['photos'] ?? [],
+                                  );
+                                  final photo = photos.isNotEmpty
+                                      ? photos.first
+                                      : '';
 
-                      // Swipe Actions Toolbar Control
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Undo
-                            FloatingActionButton(
-                              heroTag: 'undo',
-                              onPressed: () => ref.read(swipeNotifierProvider.notifier).undo(),
-                              backgroundColor: AppTheme.surfaceDark,
-                              elevation: 2,
-                              child: const Icon(Icons.replay, color: Color(0xFFF59E0B)),
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.surfaceDark,
+                                      borderRadius: BorderRadius.circular(24),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withAlpha(51),
+                                          blurRadius: 10,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        // Profile Image
+                                        Image.network(
+                                          photo.startsWith('/uploads/')
+                                              ? '$apiBaseUrl$photo'
+                                              : photo,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return const Center(
+                                              child: CircularProgressIndicator(),
+                                            );
+                                          },
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              Container(
+                                                color: AppTheme.surfaceDark,
+                                                child: const Icon(
+                                                  Icons.person,
+                                                  size: 80,
+                                                  color: Colors.white30,
+                                                ),
+                                              ),
+                                        ),
+                                        // Gradient Cover overlay
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.transparent,
+                                                Colors.black.withAlpha(204),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                          ),
+                                        ),
+                                        // Details Text info overlay
+                                        Positioned(
+                                          bottom: 24,
+                                          left: 24,
+                                          right: 24,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '${profile['displayName']}, ${profile['age'] ?? ""}',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 26,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  if (profile['verifiedBadge'] ==
+                                                      true)
+                                                    const Icon(
+                                                      Icons.verified,
+                                                      color: Colors.blue,
+                                                      size: 24,
+                                                    ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                          color: Colors.green,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                  ),
+                                                  const SizedBox(width: 6),
+                                                  const Text(
+                                                    'Online',
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 16),
+                                                  const Icon(
+                                                    Icons.location_on,
+                                                    color: Colors.white70,
+                                                    size: 14,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  const Text(
+                                                    'Nearby',
+                                                    style: TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                profile['bio'] ??
+                                                    'No bio provided',
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                onSwipe:
+                                    (previousIndex, currentIndex, direction) {
+                                      _onSwipeDetected(
+                                        previousIndex,
+                                        direction,
+                                        swipeState.profiles,
+                                      );
+                                      return true;
+                                    },
+                                onEnd: () {
+                                  ref
+                                      .read(swipeNotifierProvider.notifier)
+                                      .clearFeed();
+                                },
+                              ),
                             ),
-                            const SizedBox(width: 20),
-                            // PASS Left
-                            FloatingActionButton.large(
-                              heroTag: 'pass',
-                              onPressed: () => _swiperController.swipe(CardSwiperDirection.left),
-                              backgroundColor: AppTheme.surfaceDark,
-                              elevation: 4,
-                              child: const Icon(Icons.close, color: Colors.redAccent, size: 36),
+                          ),
+
+                          // Swipe Actions Toolbar Control
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Undo
+                                FloatingActionButton(
+                                  heroTag: 'undo',
+                                  onPressed: () => ref
+                                      .read(swipeNotifierProvider.notifier)
+                                      .undo(),
+                                  backgroundColor: AppTheme.surfaceDark,
+                                  elevation: 2,
+                                  child: const Icon(
+                                    Icons.replay,
+                                    color: Color(0xFFF59E0B),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                // PASS Left
+                                FloatingActionButton.large(
+                                  heroTag: 'pass',
+                                  onPressed: () => _swiperController.swipe(
+                                    CardSwiperDirection.left,
+                                  ),
+                                  backgroundColor: AppTheme.surfaceDark,
+                                  elevation: 4,
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.redAccent,
+                                    size: 36,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                // LIKE Right
+                                FloatingActionButton.large(
+                                  heroTag: 'like',
+                                  onPressed: () => _swiperController.swipe(
+                                    CardSwiperDirection.right,
+                                  ),
+                                  backgroundColor: AppTheme.surfaceDark,
+                                  elevation: 4,
+                                  child: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.green,
+                                    size: 36,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                // Superlike Up
+                                FloatingActionButton(
+                                  heroTag: 'superlike',
+                                  onPressed: () => _swiperController.swipe(
+                                    CardSwiperDirection.top,
+                                  ),
+                                  backgroundColor: AppTheme.surfaceDark,
+                                  elevation: 2,
+                                  child: const Icon(
+                                    Icons.star,
+                                    color: Colors.blueAccent,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 16),
-                            // LIKE Right
-                            FloatingActionButton.large(
-                              heroTag: 'like',
-                              onPressed: () => _swiperController.swipe(CardSwiperDirection.right),
-                              backgroundColor: AppTheme.surfaceDark,
-                              elevation: 4,
-                              child: const Icon(Icons.favorite, color: Colors.green, size: 36),
-                            ),
-                            const SizedBox(width: 20),
-                            // Superlike Up
-                            FloatingActionButton(
-                              heroTag: 'superlike',
-                              onPressed: () => _swiperController.swipe(CardSwiperDirection.top),
-                              backgroundColor: AppTheme.surfaceDark,
-                              elevation: 2,
-                              child: const Icon(Icons.star, color: Colors.blueAccent),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                          ),
+                        ],
+                      ),
+                    ),
       ),
     );
   }

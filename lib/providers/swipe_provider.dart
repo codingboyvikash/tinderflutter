@@ -54,14 +54,6 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
   }
 
   Future<void> swipeRight(String targetId) async {
-    // Optimistically remove card from visual stack
-    final currentProfiles = List<Map<String, dynamic>>.from(state.profiles);
-    final targetIndex = currentProfiles.indexWhere((p) => p['user']['_id'] == targetId);
-    if (targetIndex != -1) {
-      currentProfiles.removeAt(targetIndex);
-      state = state.copyWith(profiles: currentProfiles);
-    }
-
     try {
       final res = await _repository.swipeRight(targetId);
       final resData = res['data'];
@@ -80,14 +72,6 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
   }
 
   Future<void> swipeLeft(String targetId) async {
-    // Optimistically remove card
-    final currentProfiles = List<Map<String, dynamic>>.from(state.profiles);
-    final targetIndex = currentProfiles.indexWhere((p) => p['user']['_id'] == targetId);
-    if (targetIndex != -1) {
-      currentProfiles.removeAt(targetIndex);
-      state = state.copyWith(profiles: currentProfiles);
-    }
-
     try {
       await _repository.swipeLeft(targetId);
     } catch (e) {
@@ -96,14 +80,6 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
   }
 
   Future<void> superLike(String targetId) async {
-    // Optimistically remove card
-    final currentProfiles = List<Map<String, dynamic>>.from(state.profiles);
-    final targetIndex = currentProfiles.indexWhere((p) => p['user']['_id'] == targetId);
-    if (targetIndex != -1) {
-      currentProfiles.removeAt(targetIndex);
-      state = state.copyWith(profiles: currentProfiles);
-    }
-
     try {
       final res = await _repository.superLike(targetId);
       final resData = res['data'];
@@ -119,6 +95,10 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
     } catch (e) {
       print('Super Like error: $e');
     }
+  }
+
+  void clearFeed() {
+    state = state.copyWith(profiles: []);
   }
 
   Future<void> undo() async {
