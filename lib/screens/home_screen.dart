@@ -450,7 +450,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ElevatedButton.icon(
                             onPressed: () => ref
                                 .read(swipeNotifierProvider.notifier)
-                                .loadFeed(),
+                                .loadFeed(filters: {'reset': 'true'}),
                             icon: const Icon(Icons.refresh),
                             label: const Text('Refresh Discovery'),
                             style: ElevatedButton.styleFrom(
