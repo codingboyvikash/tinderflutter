@@ -23,6 +23,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _bioController = TextEditingController();
   final _professionController = TextEditingController();
   final _educationController = TextEditingController();
+  final _languagesController = TextEditingController();
+  final _hobbiesController = TextEditingController();
   
   DateTime? _selectedBirthDate;
   String _selectedGender = 'male';
@@ -46,6 +48,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _bioController.dispose();
     _professionController.dispose();
     _educationController.dispose();
+    _languagesController.dispose();
+    _hobbiesController.dispose();
     super.dispose();
   }
 
@@ -235,6 +239,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       'interestedIn': _selectedInterest,
       'profession': _professionController.text.trim(),
       'education': _educationController.text.trim(),
+      'languages': _languagesController.text.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList(),
+      'hobbies': _hobbiesController.text.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList(),
       'interests': _selectedInterestsList,
       'latitude': _latitude,
       'longitude': _longitude,
@@ -309,6 +315,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         _bioController.text = state.profile['bio'] ?? '';
         _professionController.text = state.profile['profession'] ?? '';
         _educationController.text = state.profile['education'] ?? '';
+        
+        if (state.profile['languages'] != null) {
+          _languagesController.text = List<String>.from(state.profile['languages']).join(', ');
+        }
+        if (state.profile['hobbies'] != null) {
+          _hobbiesController.text = List<String>.from(state.profile['hobbies']).join(', ');
+        }
+        
         _selectedGender = state.profile['gender'] ?? 'male';
         _selectedInterest = state.profile['interestedIn'] ?? 'female';
         if (state.profile['birthDate'] != null) {
@@ -641,6 +655,28 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     labelText: 'Education',
                     hintText: 'University/College name',
                     prefixIcon: Icon(Icons.school_outlined, color: AppTheme.textSecondaryLight),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Languages
+                TextFormField(
+                  controller: _languagesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Languages (comma separated)',
+                    hintText: 'e.g. English, Hindi, Spanish',
+                    prefixIcon: Icon(Icons.language, color: AppTheme.textSecondaryLight),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Hobbies
+                TextFormField(
+                  controller: _hobbiesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Hobbies (comma separated)',
+                    hintText: 'e.g. Gaming, Cricket, Coding',
+                    prefixIcon: Icon(Icons.favorite_border, color: AppTheme.textSecondaryLight),
                   ),
                 ),
                 const SizedBox(height: 28),

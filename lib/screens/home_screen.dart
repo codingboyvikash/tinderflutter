@@ -633,6 +633,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                   fontSize: 14,
                                                 ),
                                               ),
+                                              if (profile['languages'] != null &&
+                                                  (profile['languages'] as List).isNotEmpty) ...[
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  'Languages: ${(profile['languages'] as List).join(", ")}',
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 12,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
+                                              ],
+                                              if (profile['hobbies'] != null &&
+                                                  (profile['hobbies'] as List).isNotEmpty) ...[
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  'Hobbies: ${(profile['hobbies'] as List).join(", ")}',
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 12,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
+                                              ],
                                             ],
                                           ),
                                         ),
