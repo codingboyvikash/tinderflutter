@@ -57,7 +57,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final targetProfile = profiles[index];
     final userVal = targetProfile['user'];
-    final String? targetUserId = userVal is Map ? userVal['_id']?.toString() : userVal?.toString();
+    final String? targetUserId = userVal is Map
+        ? userVal['_id']?.toString()
+        : userVal?.toString();
     if (targetUserId == null || targetUserId.isEmpty) return;
 
     if (direction == CardSwiperDirection.right) {
@@ -165,7 +167,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (!mounted) return;
-                      final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
+                      final swipeNotifier = ref.read(
+                        swipeNotifierProvider.notifier,
+                      );
                       swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
                       if (mounted) {
@@ -185,7 +189,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: OutlinedButton(
                     onPressed: () {
                       if (!mounted) return;
-                      final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
+                      final swipeNotifier = ref.read(
+                        swipeNotifierProvider.notifier,
+                      );
                       swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
                     },
@@ -417,7 +423,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const Icon(Icons.favorite, color: AppTheme.primaryPink, size: 24),
             const SizedBox(width: 4),
             Text(
-              'spark',
+              'Tinder Spark',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: AppTheme.primaryPink,
                 fontWeight: FontWeight.w900,
@@ -442,7 +448,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   size: 26,
                 ),
                 onPressed: () {
-                  ref.read(swipeNotifierProvider.notifier).loadIncomingRequests();
+                  ref
+                      .read(swipeNotifierProvider.notifier)
+                      .loadIncomingRequests();
                   context.push('/matches');
                 },
               ),
@@ -452,7 +460,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   right: 6,
                   child: GestureDetector(
                     onTap: () {
-                      ref.read(swipeNotifierProvider.notifier).loadIncomingRequests();
+                      ref
+                          .read(swipeNotifierProvider.notifier)
+                          .loadIncomingRequests();
                       context.push('/matches');
                     },
                     child: Container(

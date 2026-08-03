@@ -14,6 +14,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -27,6 +28,39 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       curve: Curves.easeInOut,
     );
     _controller.forward();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuthAndNavigate();
+    });
+  }
+
+  void _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted || _hasNavigated) return;
+
+    final state = ref.read(authNotifierProvider);
+    if (state is! AuthInitial && state is! AuthLoading) {
+      _navigateBasedOnAuth(state);
+    }
+  }
+
+  void _navigateBasedOnAuth(AuthState authState) {
+    if (!mounted || _hasNavigated) return;
+
+    if (authState is AuthAuthenticated) {
+      _hasNavigated = true;
+      if (authState.user['hasProfile'] == false) {
+        context.go('/profile-setup');
+      } else {
+        context.go('/home');
+      }
+    } else if (authState is AuthPendingOTP) {
+      _hasNavigated = true;
+      context.go('/verify-otp', extra: authState.email);
+    } else if (authState is AuthUnauthenticated || authState is AuthError) {
+      _hasNavigated = true;
+      context.go('/onboarding');
+    }
   }
 
   @override
@@ -39,17 +73,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   Widget build(BuildContext context) {
     // Listen to Auth State to redirect
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
-      if (next is AuthAuthenticated) {
-        if (next.user['hasProfile'] == true) {
-          context.go('/home');
-        } else {
-          context.go('/profile-setup');
-        }
-      } else if (next is AuthPendingOTP) {
-        context.go('/verify-otp', extra: next.email);
-      } else if (next is AuthUnauthenticated) {
-        context.go('/onboarding');
-      }
+      _navigateBasedOnAuth(next);
     });
 
     return Scaffold(
