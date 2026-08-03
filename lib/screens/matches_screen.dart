@@ -32,8 +32,17 @@ class _MatchesScreenState extends ConsumerState<MatchesScreen> {
     final incomingRequests = swipeState.incomingRequests;
 
     final apiBaseUrl = ref.watch(networkServiceProvider).dio.options.baseUrl;
-    final currentUser = (ref.watch(authNotifierProvider) as AuthAuthenticated).user;
-    final myUserId = currentUser['id'] as String;
+    final authState = ref.watch(authNotifierProvider);
+    if (authState is! AuthAuthenticated) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final currentUser = authState.user;
+    final myUserId = (currentUser['id'] ?? currentUser['_id'])?.toString() ?? '';
 
     return Scaffold(
       appBar: AppBar(

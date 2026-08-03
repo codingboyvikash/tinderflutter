@@ -120,8 +120,17 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     final chatState = ref.watch(chatNotifierProvider);
     final apiBaseUrl = ref.watch(networkServiceProvider).dio.options.baseUrl;
     
-    final currentUser = (ref.watch(authNotifierProvider) as AuthAuthenticated).user;
-    final myUserId = currentUser['id'] as String;
+    final authState = ref.watch(authNotifierProvider);
+    if (authState is! AuthAuthenticated) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final currentUser = authState.user;
+    final myUserId = (currentUser['id'] ?? currentUser['_id'])?.toString() ?? '';
 
     final messages = chatState.roomMessages[widget.chatId] ?? [];
     final otherUserPhotos = List<String>.from(widget.recipientProfile['photos'] ?? []);
