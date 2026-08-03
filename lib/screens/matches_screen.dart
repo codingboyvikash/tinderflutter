@@ -307,7 +307,7 @@ class _MatchesScreenState extends ConsumerState<MatchesScreen> {
                           return GestureDetector(
                             onTap: () {
                               ref.read(chatNotifierProvider.notifier).openChatRoom(chat['chatRoomId']);
-                              context.push('/chat/${chat.chatRoomId}', extra: profile);
+                              context.push('/chat/${chat['chatRoomId']}', extra: profile);
                             },
                             child: Container(
                               margin: const EdgeInsets.only(bottom: 18),

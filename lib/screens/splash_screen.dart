@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
+import '../services/fcm_service.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -49,6 +50,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
     if (authState is AuthAuthenticated) {
       _hasNavigated = true;
+
+      if (FCMService.pendingRedirectRoute != null) {
+        final route = FCMService.pendingRedirectRoute!;
+        final extra = FCMService.pendingRedirectExtra;
+        FCMService.pendingRedirectRoute = null;
+        FCMService.pendingRedirectExtra = null;
+
+        context.go('/home');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            context.push(route, extra: extra);
+          }
+        });
+        return;
+      }
+
       if (authState.user['hasProfile'] == false) {
         context.go('/profile-setup');
       } else {

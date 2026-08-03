@@ -66,7 +66,7 @@ final GoRouter appRouter = GoRouter(
       path: '/chat/:chatId',
       builder: (context, state) {
         final chatId = state.pathParameters['chatId']!;
-        final profile = state.extra as Map<String, dynamic>;
+        final profile = (state.extra as Map<String, dynamic>?) ?? <String, dynamic>{};
         return ChatRoomScreen(chatId: chatId, recipientProfile: profile);
       },
     ),

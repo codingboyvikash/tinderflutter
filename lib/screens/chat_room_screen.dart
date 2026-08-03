@@ -127,6 +127,13 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
     final otherUserPhotos = List<String>.from(widget.recipientProfile['photos'] ?? []);
     final otherUserPhoto = otherUserPhotos.isNotEmpty ? otherUserPhotos.first : '';
 
+    ImageProvider? avatarImage;
+    if (otherUserPhoto.isNotEmpty) {
+      avatarImage = CachedNetworkImageProvider(
+        otherUserPhoto.startsWith('/uploads/') ? '$apiBaseUrl$otherUserPhoto' : otherUserPhoto,
+      );
+    }
+
     final isTyping = chatState.typingRoomId == widget.chatId;
 
     return Scaffold(
@@ -135,9 +142,10 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                otherUserPhoto.startsWith('/uploads/') ? '$apiBaseUrl$otherUserPhoto' : otherUserPhoto,
-              ),
+              backgroundImage: avatarImage,
+              child: avatarImage == null
+                  ? const Icon(Icons.person, color: Colors.white)
+                  : null,
             ),
             const SizedBox(width: 12),
             Column(
