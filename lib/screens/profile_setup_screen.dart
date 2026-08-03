@@ -41,6 +41,72 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   ];
   final List<String> _selectedInterestsList = [];
   final List<XFile> _localPhotos = [];
+  bool _initializedProfileData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAndPopulateProfile();
+    });
+  }
+
+  void _loadAndPopulateProfile() async {
+    final state = ref.read(profileNotifierProvider);
+    if (state is ProfileLoaded) {
+      _populateFromProfileMap(state.profile);
+    } else {
+      await ref.read(profileNotifierProvider.notifier).loadProfile();
+      final nextState = ref.read(profileNotifierProvider);
+      if (nextState is ProfileLoaded) {
+        _populateFromProfileMap(nextState.profile);
+      }
+    }
+  }
+
+  void _populateFromProfileMap(Map<String, dynamic> profile) {
+    if (_initializedProfileData) return;
+    _initializedProfileData = true;
+
+    setState(() {
+      _nameController.text = profile['displayName']?.toString() ?? '';
+      _bioController.text = profile['bio']?.toString() ?? '';
+      _professionController.text = profile['profession']?.toString() ?? '';
+      _educationController.text = profile['education']?.toString() ?? '';
+
+      if (profile['languages'] != null && profile['languages'] is List) {
+        _languagesController.text = List<String>.from(profile['languages']).join(', ');
+      }
+      if (profile['hobbies'] != null && profile['hobbies'] is List) {
+        _hobbiesController.text = List<String>.from(profile['hobbies']).join(', ');
+      }
+      if (profile['interests'] != null && profile['interests'] is List) {
+        _selectedInterestsList.clear();
+        _selectedInterestsList.addAll(List<String>.from(profile['interests']));
+      }
+
+      if (profile['gender'] != null && profile['gender'].toString().isNotEmpty) {
+        _selectedGender = profile['gender'].toString();
+      }
+      if (profile['interestedIn'] != null && profile['interestedIn'].toString().isNotEmpty) {
+        _selectedInterest = profile['interestedIn'].toString();
+      }
+
+      if (profile['birthDate'] != null) {
+        try {
+          _selectedBirthDate = DateTime.tryParse(profile['birthDate'].toString());
+        } catch (_) {}
+      }
+
+      if (profile['location'] != null && profile['location']['coordinates'] != null) {
+        final coords = profile['location']['coordinates'] as List;
+        if (coords.length >= 2) {
+          _longitude = (coords[0] as num).toDouble();
+          _latitude = (coords[1] as num).toDouble();
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -306,37 +372,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(profileNotifierProvider);
 
+    ref.listen<ProfileState>(profileNotifierProvider, (previous, next) {
+      if (next is ProfileLoaded) {
+        _populateFromProfileMap(next.profile);
+      }
+    });
+
     List<String> photos = [];
+    bool isEditing = false;
     if (state is ProfileLoaded) {
       photos = List<String>.from(state.profile['photos'] ?? []);
-      // Populate fields on first load if profile exists
-      if (_nameController.text.isEmpty && state.profile['displayName'] != null) {
-        _nameController.text = state.profile['displayName'];
-        _bioController.text = state.profile['bio'] ?? '';
-        _professionController.text = state.profile['profession'] ?? '';
-        _educationController.text = state.profile['education'] ?? '';
-        
-        if (state.profile['languages'] != null) {
-          _languagesController.text = List<String>.from(state.profile['languages']).join(', ');
-        }
-        if (state.profile['hobbies'] != null) {
-          _hobbiesController.text = List<String>.from(state.profile['hobbies']).join(', ');
-        }
-        
-        _selectedGender = state.profile['gender'] ?? 'male';
-        _selectedInterest = state.profile['interestedIn'] ?? 'female';
-        if (state.profile['birthDate'] != null) {
-          _selectedBirthDate = DateTime.parse(state.profile['birthDate']);
-        }
-        if (state.profile['location'] != null && state.profile['location']['coordinates'] != null) {
-          final coords = state.profile['location']['coordinates'] as List;
-          _longitude = coords[0].toDouble();
-          _latitude = coords[1].toDouble();
-        }
-        if (state.profile['interests'] != null) {
-          _selectedInterestsList.clear();
-          _selectedInterestsList.addAll(List<String>.from(state.profile['interests']));
-        }
+      if (state.profile['displayName'] != null) {
+        isEditing = true;
       }
     }
 
@@ -344,7 +391,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(isEditing ? 'Edit Profile Details' : 'Create Profile', style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
