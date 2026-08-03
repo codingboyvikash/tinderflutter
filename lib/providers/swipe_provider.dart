@@ -9,12 +9,14 @@ final swipeRepositoryProvider = Provider<SwipeRepository>((ref) {
 
 class SwipeState {
   final List<Map<String, dynamic>> profiles;
+  final List<Map<String, dynamic>> incomingRequests;
   final bool isLoading;
   final String? errorMessage;
   final Map<String, dynamic>? lastMatch;
 
   SwipeState({
     required this.profiles,
+    this.incomingRequests = const [],
     required this.isLoading,
     this.errorMessage,
     this.lastMatch,
@@ -22,12 +24,14 @@ class SwipeState {
 
   SwipeState copyWith({
     List<Map<String, dynamic>>? profiles,
+    List<Map<String, dynamic>>? incomingRequests,
     bool? isLoading,
     String? errorMessage,
     Map<String, dynamic>? lastMatch,
   }) {
     return SwipeState(
       profiles: profiles ?? this.profiles,
+      incomingRequests: incomingRequests ?? this.incomingRequests,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       lastMatch: lastMatch ?? this.lastMatch,
@@ -39,8 +43,9 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
   final SwipeRepository _repository;
 
   SwipeNotifier(this._repository)
-      : super(SwipeState(profiles: [], isLoading: false)) {
+      : super(SwipeState(profiles: [], incomingRequests: [], isLoading: false)) {
     loadFeed();
+    loadIncomingRequests();
   }
 
   Future<void> loadFeed({Map<String, dynamic>? filters}) async {
@@ -50,6 +55,15 @@ class SwipeNotifier extends StateNotifier<SwipeState> {
       state = state.copyWith(profiles: feed, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> loadIncomingRequests() async {
+    try {
+      final requests = await _repository.getIncomingRequests();
+      state = state.copyWith(incomingRequests: requests);
+    } catch (e) {
+      print('Load incoming requests error: $e');
     }
   }
 

@@ -55,8 +55,10 @@ class AuthError extends AuthState {
 // Authentication Notifier
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
+  final NetworkService _network;
 
-  AuthNotifier(this._repository) : super(const AuthInitial()) {
+  AuthNotifier(this._repository, this._network) : super(const AuthInitial()) {
+    _network.onUnauthenticated = handleForceLogout;
     checkStatus();
   }
 
@@ -186,9 +188,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _repository.logout();
     state = const AuthUnauthenticated();
   }
+
+  void handleForceLogout() {
+    state = const AuthUnauthenticated();
+  }
 }
 
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final repository = ref.watch(authRepositoryProvider);
-  return AuthNotifier(repository);
+  final network = ref.watch(networkServiceProvider);
+  return AuthNotifier(repository, network);
 });

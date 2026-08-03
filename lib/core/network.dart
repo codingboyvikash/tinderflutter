@@ -5,6 +5,7 @@ import '../services/secure_storage_service.dart';
 class NetworkService {
   final Dio dio;
   final SecureStorageService _secureStorage;
+  Function()? onUnauthenticated;
 
   NetworkService(this._secureStorage) : dio = Dio() {
     // Load config from dotenv or default
@@ -89,6 +90,7 @@ class NetworkService {
 
     // Refresh failed - clear secure storage (force log out)
     await _secureStorage.clearAll();
+    onUnauthenticated?.call();
     return false;
   }
 }

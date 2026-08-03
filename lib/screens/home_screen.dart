@@ -29,6 +29,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(swipeNotifierProvider.notifier).loadIncomingRequests();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _swiperController.dispose();
     _religionFilterController.dispose();
@@ -42,6 +52,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     CardSwiperDirection direction,
     List<Map<String, dynamic>> profiles,
   ) {
+    if (!mounted) return;
     if (index >= profiles.length) return;
 
     final targetProfile = profiles[index];
@@ -153,6 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: ElevatedButton(
                     onPressed: () {
+                      if (!mounted) return;
                       final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
                       swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
@@ -172,6 +184,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: OutlinedButton(
                     onPressed: () {
+                      if (!mounted) return;
                       final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
                       swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
@@ -366,6 +379,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+      if (next is AuthUnauthenticated) {
+        context.go('/login');
+      }
+    });
+
     final swipeState = ref.watch(swipeNotifierProvider);
     final profileState = ref.watch(profileNotifierProvider);
     final apiBaseUrl = ref.watch(networkServiceProvider).dio.options.baseUrl;
@@ -413,12 +432,58 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.tune, color: AppTheme.textSecondaryLight),
             onPressed: () => _showFilterBottomSheet(context),
           ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: AppTheme.textSecondaryLight,
+                  size: 26,
+                ),
+                onPressed: () {
+                  ref.read(swipeNotifierProvider.notifier).loadIncomingRequests();
+                  context.push('/matches');
+                },
+              ),
+              if (swipeState.incomingRequests.isNotEmpty)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: GestureDetector(
+                    onTap: () {
+                      ref.read(swipeNotifierProvider.notifier).loadIncomingRequests();
+                      context.push('/matches');
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: AppTheme.primaryPink,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      child: Text(
+                        '${swipeState.incomingRequests.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const Icon(
               Icons.chat_bubble_outline,
               color: AppTheme.textSecondaryLight,
             ),
-            // Match History and Chats redirect in Module 5
             onPressed: () => context.push('/matches'),
           ),
         ],

@@ -7,6 +7,7 @@ abstract class SwipeRepository {
   Future<Map<String, dynamic>> swipeLeft(String targetId);
   Future<Map<String, dynamic>> superLike(String targetId);
   Future<Map<String, dynamic>> undo();
+  Future<List<Map<String, dynamic>>> getIncomingRequests();
 }
 
 class SwipeRepositoryImpl implements SwipeRepository {
@@ -66,6 +67,17 @@ class SwipeRepositoryImpl implements SwipeRepository {
     try {
       final response = await _network.dio.post('/api/swipe/undo');
       return response.data;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getIncomingRequests() async {
+    try {
+      final response = await _network.dio.get('/api/swipe/requests');
+      final data = response.data['data'] as List;
+      return data.map((item) => item as Map<String, dynamic>).toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
