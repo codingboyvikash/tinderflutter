@@ -45,6 +45,7 @@ class FCMService {
   }
 
   // Background message handler
+  @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     // Make sure firebase is initialized in background isolate
     await Firebase.initializeApp();

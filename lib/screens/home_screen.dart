@@ -45,7 +45,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (index >= profiles.length) return;
 
     final targetProfile = profiles[index];
-    final targetUserId = targetProfile['user']['_id'] as String;
+    final userVal = targetProfile['user'];
+    final String? targetUserId = userVal is Map ? userVal['_id']?.toString() : userVal?.toString();
+    if (targetUserId == null || targetUserId.isEmpty) return;
 
     if (direction == CardSwiperDirection.right) {
       ref.read(swipeNotifierProvider.notifier).swipeRight(targetUserId);
@@ -151,10 +153,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: ElevatedButton(
                     onPressed: () {
+                      final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
+                      swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
-                      ref.read(swipeNotifierProvider.notifier).clearMatch();
-                      // Redirect to Chat Room in Module 5
-                      context.go('/matches');
+                      if (mounted) {
+                        context.go('/matches');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryPink,
@@ -168,8 +172,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: OutlinedButton(
                     onPressed: () {
+                      final swipeNotifier = ref.read(swipeNotifierProvider.notifier);
+                      swipeNotifier.clearMatch();
                       Navigator.of(context).pop();
-                      ref.read(swipeNotifierProvider.notifier).clearMatch();
                     },
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 56),
@@ -375,7 +380,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // Trigger match overlay check
     if (swipeState.lastMatch != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showMatchDialog(context, swipeState.lastMatch!, myPhoto, apiBaseUrl);
+        if (mounted) {
+          _showMatchDialog(context, swipeState.lastMatch!, myPhoto, apiBaseUrl);
+        }
       });
     }
 
@@ -485,6 +492,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               return const SizedBox.shrink();
                             }
                             final profile = swipeState.profiles[index];
+                            if (profile == null) return const SizedBox.shrink();
+
                             final photos = List<String>.from(
                               profile['photos'] ?? [],
                             );
@@ -555,22 +564,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            Text(
-                                              '${profile['displayName']}, ${profile['age'] ?? ""}',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 26,
-                                                fontWeight: FontWeight.bold,
+                                            Flexible(
+                                              child: Text(
+                                                '${profile['displayName'] ?? "User"}${profile['age'] != null ? ", ${profile['age']}" : ""}',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(width: 8),
                                             if (profile['verifiedBadge'] ==
-                                                true)
+                                                true) ...[
+                                              const SizedBox(width: 8),
                                               const Icon(
                                                 Icons.verified,
                                                 color: Colors.blue,
                                                 size: 24,
                                               ),
+                                            ],
                                           ],
                                         ),
                                         const SizedBox(height: 4),
