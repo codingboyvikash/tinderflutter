@@ -479,13 +479,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
             ],
           ),
-          IconButton(
-            icon: const Icon(
-              Icons.chat_bubble_outline,
-              color: AppTheme.textSecondaryLight,
-            ),
-            onPressed: () => context.push('/matches'),
-          ),
         ],
         centerTitle: true,
         backgroundColor: Colors.transparent,
