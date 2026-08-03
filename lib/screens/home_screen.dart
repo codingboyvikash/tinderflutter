@@ -423,338 +423,334 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: swipeState.isLoading
             ? const Center(child: CircularProgressIndicator())
             : swipeState.profiles.isEmpty
-                ? Center(
-                    key: const ValueKey('empty_state'),
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.location_searching,
-                            size: 70,
-                            color: AppTheme.textSecondaryLight,
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            'No Matches Near You',
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'You have swiped on everyone in your distance preference. Expand your range or check back later!',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 32),
-                          ElevatedButton.icon(
-                            onPressed: () => ref
-                                .read(swipeNotifierProvider.notifier)
-                                .loadFeed(filters: {'reset': 'true'}),
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('Refresh Discovery'),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(200, 56),
-                            ),
-                          ),
-                        ],
+            ? Center(
+                key: const ValueKey('empty_state'),
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.location_searching,
+                        size: 70,
+                        color: AppTheme.textSecondaryLight,
                       ),
-                    ),
-                  )
-                : Container(
-                    key: const ValueKey('swiper_layout'),
-                    color: AppTheme.backgroundDark,
-                    child: Column(
-                        children: [
-                          // Swiper Stack View
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
-                              child: CardSwiper(
-                                key: ValueKey(swipeState.profiles.length),
-                                controller: _swiperController,
-                                cardsCount: swipeState.profiles.length,
-                                numberOfCardsDisplayed: swipeState
-                                    .profiles
-                                    .length
-                                    .clamp(1, 2),
-                                cardBuilder: (context, index, percentX, percentY) {
-                                  if (index < 0 ||
-                                      index >= swipeState.profiles.length) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  final profile = swipeState.profiles[index];
-                                  final photos = List<String>.from(
-                                    profile['photos'] ?? [],
-                                  );
-                                  final photo = photos.isNotEmpty
-                                      ? photos.first
-                                      : '';
+                      const SizedBox(height: 24),
+                      Text(
+                        'No Matches Near You',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'You have swiped on everyone in your distance preference. Expand your range or check back later!',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton.icon(
+                        onPressed: () => ref
+                            .read(swipeNotifierProvider.notifier)
+                            .loadFeed(filters: {'reset': 'true'}),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Refresh Discovery'),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 56),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Container(
+                key: const ValueKey('swiper_layout'),
+                color: AppTheme.backgroundDark,
+                child: Column(
+                  children: [
+                    // Swiper Stack View
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: CardSwiper(
+                          key: ValueKey(swipeState.profiles.length),
+                          controller: _swiperController,
+                          cardsCount: swipeState.profiles.length,
+                          numberOfCardsDisplayed: swipeState.profiles.length
+                              .clamp(1, 2),
+                          cardBuilder: (context, index, percentX, percentY) {
+                            if (index < 0 ||
+                                index >= swipeState.profiles.length) {
+                              return const SizedBox.shrink();
+                            }
+                            final profile = swipeState.profiles[index];
+                            final photos = List<String>.from(
+                              profile['photos'] ?? [],
+                            );
+                            final photo = photos.isNotEmpty ? photos.first : '';
 
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.surfaceDark,
-                                      borderRadius: BorderRadius.circular(24),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withAlpha(51),
-                                          blurRadius: 10,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        // Profile Image
-                                        Image.network(
-                                          photo.startsWith('/uploads/')
-                                              ? '$apiBaseUrl$photo'
-                                              : photo,
-                                          fit: BoxFit.cover,
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
-                                            return const Center(
-                                              child: CircularProgressIndicator(),
-                                            );
-                                          },
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              Container(
-                                                color: AppTheme.surfaceDark,
-                                                child: const Icon(
-                                                  Icons.person,
-                                                  size: 80,
-                                                  color: Colors.white30,
-                                                ),
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: AppTheme.surfaceDark,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(51),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  // Profile Image
+                                  Image.network(
+                                    photo.startsWith('/uploads/')
+                                        ? '$apiBaseUrl$photo'
+                                        : photo,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              color: AppTheme.surfaceDark,
+                                              child: const Icon(
+                                                Icons.person,
+                                                size: 80,
+                                                color: Colors.white30,
                                               ),
-                                        ),
-                                        // Gradient Cover overlay
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Colors.transparent,
-                                                Colors.black.withAlpha(204),
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
                                             ),
-                                          ),
+                                  ),
+                                  // Gradient Cover overlay
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black.withAlpha(204),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                    ),
+                                  ),
+                                  // Details Text info overlay
+                                  Positioned(
+                                    bottom: 24,
+                                    left: 24,
+                                    right: 24,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '${profile['displayName']}, ${profile['age'] ?? ""}',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 26,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            if (profile['verifiedBadge'] ==
+                                                true)
+                                              const Icon(
+                                                Icons.verified,
+                                                color: Colors.blue,
+                                                size: 24,
+                                              ),
+                                          ],
                                         ),
-                                        // Details Text info overlay
-                                        Positioned(
-                                          bottom: 24,
-                                          left: 24,
-                                          right: 24,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    '${profile['displayName']}, ${profile['age'] ?? ""}',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 26,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  if (profile['verifiedBadge'] ==
-                                                      true)
-                                                    const Icon(
-                                                      Icons.verified,
-                                                      color: Colors.blue,
-                                                      size: 24,
-                                                    ),
-                                                ],
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 8,
+                                              height: 8,
+                                              decoration: const BoxDecoration(
+                                                color: Colors.green,
+                                                shape: BoxShape.circle,
                                               ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    width: 8,
-                                                    height: 8,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                          color: Colors.green,
-                                                          shape:
-                                                              BoxShape.circle,
-                                                        ),
-                                                  ),
-                                                  const SizedBox(width: 6),
-                                                  const Text(
-                                                    'Online',
-                                                    style: TextStyle(
-                                                      color: Colors.green,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 16),
-                                                  const Icon(
-                                                    Icons.location_on,
-                                                    color: Colors.white70,
-                                                    size: 14,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      (profile['locationName'] != null &&
-                                                              profile['locationName']
-                                                                  .toString()
-                                                                  .isNotEmpty)
-                                                          ? profile['locationName']
-                                                              .toString()
-                                                          : 'Nearby',
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                        color: Colors.white70,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                            ),
+                                            const SizedBox(width: 6),
+                                            const Text(
+                                              'Online',
+                                              style: TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 13,
                                               ),
-                                              const SizedBox(height: 12),
-                                              Text(
-                                                profile['bio'] ??
-                                                    'No bio provided',
-                                                maxLines: 2,
+                                            ),
+                                            const SizedBox(width: 16),
+                                            const Icon(
+                                              Icons.location_on,
+                                              color: Colors.white70,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                (profile['locationName'] !=
+                                                            null &&
+                                                        profile['locationName']
+                                                            .toString()
+                                                            .isNotEmpty)
+                                                    ? profile['locationName']
+                                                          .toString()
+                                                    : 'Nearby',
+                                                maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
                                                   color: Colors.white70,
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                 ),
                                               ),
-                                              if (profile['languages'] != null &&
-                                                  (profile['languages'] as List).isNotEmpty) ...[
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Languages: ${(profile['languages'] as List).join(", ")}',
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 12,
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
-                                                ),
-                                              ],
-                                              if (profile['hobbies'] != null &&
-                                                  (profile['hobbies'] as List).isNotEmpty) ...[
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Hobbies: ${(profile['hobbies'] as List).join(", ")}',
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 12,
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          profile['bio'] ?? 'No bio provided',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 14,
                                           ),
                                         ),
+                                        if (profile['languages'] != null &&
+                                            (profile['languages'] as List)
+                                                .isNotEmpty) ...[
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Languages: ${(profile['languages'] as List).join(", ")}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
+                                        if (profile['hobbies'] != null &&
+                                            (profile['hobbies'] as List)
+                                                .isNotEmpty) ...[
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Hobbies: ${(profile['hobbies'] as List).join(", ")}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
                                       ],
                                     ),
-                                  );
-                                },
-                                onSwipe:
-                                    (previousIndex, currentIndex, direction) {
-                                      _onSwipeDetected(
-                                        previousIndex,
-                                        direction,
-                                        swipeState.profiles,
-                                      );
-                                      return true;
-                                    },
-                                onEnd: () {
-                                  ref
-                                      .read(swipeNotifierProvider.notifier)
-                                      .clearFeed();
-                                },
+                                  ),
+                                ],
                               ),
+                            );
+                          },
+                          onSwipe: (previousIndex, currentIndex, direction) {
+                            _onSwipeDetected(
+                              previousIndex,
+                              direction,
+                              swipeState.profiles,
+                            );
+                            return true;
+                          },
+                          onEnd: () {
+                            ref
+                                .read(swipeNotifierProvider.notifier)
+                                .clearFeed();
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // Swipe Actions Toolbar Control
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Undo
+                          FloatingActionButton(
+                            heroTag: 'undo',
+                            onPressed: () =>
+                                ref.read(swipeNotifierProvider.notifier).undo(),
+                            backgroundColor: AppTheme.surfaceDark,
+                            elevation: 2,
+                            child: const Icon(
+                              Icons.replay,
+                              color: Color(0xFFF59E0B),
                             ),
                           ),
-
-                          // Swipe Actions Toolbar Control
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 24.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Undo
-                                FloatingActionButton(
-                                  heroTag: 'undo',
-                                  onPressed: () => ref
-                                      .read(swipeNotifierProvider.notifier)
-                                      .undo(),
-                                  backgroundColor: AppTheme.surfaceDark,
-                                  elevation: 2,
-                                  child: const Icon(
-                                    Icons.replay,
-                                    color: Color(0xFFF59E0B),
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                // PASS Left
-                                FloatingActionButton.large(
-                                  heroTag: 'pass',
-                                  onPressed: () => _swiperController.swipe(
-                                    CardSwiperDirection.left,
-                                  ),
-                                  backgroundColor: AppTheme.surfaceDark,
-                                  elevation: 4,
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.redAccent,
-                                    size: 36,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                // LIKE Right
-                                FloatingActionButton.large(
-                                  heroTag: 'like',
-                                  onPressed: () => _swiperController.swipe(
-                                    CardSwiperDirection.right,
-                                  ),
-                                  backgroundColor: AppTheme.surfaceDark,
-                                  elevation: 4,
-                                  child: const Icon(
-                                    Icons.favorite,
-                                    color: Colors.green,
-                                    size: 36,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                // Superlike Up
-                                FloatingActionButton(
-                                  heroTag: 'superlike',
-                                  onPressed: () => _swiperController.swipe(
-                                    CardSwiperDirection.top,
-                                  ),
-                                  backgroundColor: AppTheme.surfaceDark,
-                                  elevation: 2,
-                                  child: const Icon(
-                                    Icons.star,
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                              ],
+                          const SizedBox(width: 20),
+                          // PASS Left
+                          FloatingActionButton.large(
+                            heroTag: 'pass',
+                            onPressed: () => _swiperController.swipe(
+                              CardSwiperDirection.left,
+                            ),
+                            backgroundColor: AppTheme.surfaceDark,
+                            elevation: 4,
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.redAccent,
+                              size: 36,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // LIKE Right
+                          FloatingActionButton.large(
+                            heroTag: 'like',
+                            onPressed: () => _swiperController.swipe(
+                              CardSwiperDirection.right,
+                            ),
+                            backgroundColor: AppTheme.surfaceDark,
+                            elevation: 4,
+                            child: const Icon(
+                              Icons.favorite,
+                              color: Colors.green,
+                              size: 36,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          // Superlike Up
+                          FloatingActionButton(
+                            heroTag: 'superlike',
+                            onPressed: () => _swiperController.swipe(
+                              CardSwiperDirection.top,
+                            ),
+                            backgroundColor: AppTheme.surfaceDark,
+                            elevation: 2,
+                            child: const Icon(
+                              Icons.star,
+                              color: Colors.blueAccent,
                             ),
                           ),
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
       ),
     );
   }

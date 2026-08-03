@@ -18,6 +18,7 @@ abstract class AuthRepository {
   Future<void> logout();
   Future<bool> checkAuthStatus();
   Future<Map<String, dynamic>?> getCurrentUser();
+  Future<void> updateFCMToken(String token);
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -179,6 +180,18 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Map<String, dynamic>?> getCurrentUser() async {
     return await _secureStorage.getUser();
+  }
+
+  @override
+  Future<void> updateFCMToken(String token) async {
+    try {
+      await _network.dio.post('/api/auth/fcm-token', data: {
+        'fcmToken': token,
+      });
+      print('🔑 Successfully registered FCM token with backend.');
+    } on DioException catch (e) {
+      print('❌ Failed to register FCM token with backend: ${_handleDioError(e)}');
+    }
   }
 
   String _handleDioError(DioException error) {

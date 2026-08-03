@@ -10,7 +10,7 @@ class NetworkService {
     // Load config from dotenv or default
     final baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5001';
     print("🌐 NetworkService initialized with Base URL: $baseUrl");
-    
+
     dio.options = BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -32,18 +32,18 @@ class NetworkService {
         },
         onError: (DioException err, handler) async {
           // Check for token expired error code
-          if (err.response?.statusCode == 401 && 
-              err.response?.data != null && 
-              (err.response?.data['message'] == 'token_expired' || 
-               err.response?.data['message'] == 'Your token has expired! Please log in again.')) {
-            
+          if (err.response?.statusCode == 401 &&
+              err.response?.data != null &&
+              (err.response?.data['message'] == 'token_expired' ||
+                  err.response?.data['message'] ==
+                      'Your token has expired! Please log in again.')) {
             final refreshed = await _attemptTokenRefresh();
             if (refreshed) {
               // Retry original request with new access token
               final requestOptions = err.requestOptions;
               final newToken = await _secureStorage.getAccessToken();
               requestOptions.headers['Authorization'] = 'Bearer $newToken';
-              
+
               try {
                 final response = await dio.fetch(requestOptions);
                 return handler.resolve(response);
@@ -66,7 +66,7 @@ class NetworkService {
       final baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5001';
       // Use clean Dio client to avoid recursive intercepts
       final refreshDio = Dio(BaseOptions(baseUrl: baseUrl));
-      
+
       final response = await refreshDio.post(
         '/api/auth/refresh-token',
         data: {'refreshToken': refreshToken},
@@ -77,7 +77,10 @@ class NetworkService {
         final newAccess = data['accessToken'] as String;
         final newRefresh = data['refreshToken'] as String;
 
-        await _secureStorage.saveTokens(accessToken: newAccess, refreshToken: newRefresh);
+        await _secureStorage.saveTokens(
+          accessToken: newAccess,
+          refreshToken: newRefresh,
+        );
         return true;
       }
     } catch (e) {

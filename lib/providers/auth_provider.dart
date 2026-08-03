@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../repository/auth_repository.dart';
 import '../services/secure_storage_service.dart';
 import '../core/network.dart';
@@ -59,12 +60,25 @@ class AuthNotifier extends StateNotifier<AuthState> {
     checkStatus();
   }
 
+  Future<void> _registerFCMToken() async {
+    try {
+      final messaging = FirebaseMessaging.instance;
+      final token = await messaging.getToken();
+      if (token != null) {
+        await _repository.updateFCMToken(token);
+      }
+    } catch (e) {
+      print('Warning: Failed to fetch and upload FCM token: $e');
+    }
+  }
+
   Future<void> checkStatus() async {
     final isAuthenticated = await _repository.checkAuthStatus();
     if (isAuthenticated) {
       final user = await _repository.getCurrentUser();
       if (user != null) {
         state = AuthAuthenticated(user);
+        _registerFCMToken();
         return;
       }
     }
@@ -95,6 +109,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = AuthPendingOTP(email);
       } else {
         state = AuthAuthenticated(data['user']);
+        _registerFCMToken();
       }
     } catch (e) {
       state = AuthError(e.toString());
@@ -107,6 +122,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final result = await _repository.verifyOTP(email: email, otp: otp);
       final data = result['data'];
       state = AuthAuthenticated(data['user']);
+      _registerFCMToken();
     } catch (e) {
       state = AuthError(e.toString());
     }
@@ -159,6 +175,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       final data = result['data'];
       state = AuthAuthenticated(data['user']);
+      _registerFCMToken();
     } catch (e) {
       state = AuthError(e.toString());
     }
